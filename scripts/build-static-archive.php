@@ -1069,7 +1069,7 @@ $infoHtml .= <<<HTML
     <div class="how_section" id="about">
         <div class="container">
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
-                <h3>About</h3>
+                <h2>About</h2>
 
                 <p><strong>Cloudberry</strong> was an off-the-grid, solar-powered, long-term photography project. Using a GoPro, a Raspberry Pi, and a USB cellular modem, the system we designed took one photograph per hour between 8 AM and 8 PM each day and uploaded the images via a cellular network to this website.</p>
 
@@ -1081,7 +1081,7 @@ $infoHtml .= <<<HTML
 
 {$spanParagraph}
 
-                <h3>Okay, but why Pinchard's Island?</h3>
+                <h2>Okay, but why Pinchard's Island?</h2>
 
                 <p><a href="https://art.adamsimms.xyz/" target="_blank" rel="noopener noreferrer">Adam</a> has been photographing <a href="https://art.adamsimms.xyz/pinchards-island" target="_blank" rel="noopener noreferrer">Pinchard's Island</a> and its previous residents for several years. The harsh weather conditions and the extreme remoteness of the island made it difficult to access the island year round and take images over long periods of time. Cloudberry grew from the desire to be able to photograph the island throughout the year from anywhere via the internet.</p>
 
@@ -1089,7 +1089,7 @@ $infoHtml .= <<<HTML
 
                 <p>Shortly after Newfoundland joined Canada as its 10th province, Pinchard's Island was <a href="https://art.adamsimms.xyz/resettlement" target="_blank" rel="noopener noreferrer">resettled</a> in an attempt to modernize the province. Adam has been documenting the return of his grandmother, along with her brothers and sisters, to this island each summer in an attempt to write the future of resettlement by reviving traditions and creating new ones.</p>
 
-                <h3>Where is Pinchard's Island?</h3>
+                <h2>Where is Pinchard's Island?</h2>
                 <p>Pinchard's Island is situated at the northern edge of Bonavista Bay, Newfoundland, Canada. It was one of the first settled sites in Bonavista Bay but is no longer inhabited.</p>
 
                 <div class="info-map">
@@ -1102,7 +1102,7 @@ $infoHtml .= <<<HTML
     <div class="how_section" id="how">
         <div class="container">
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
-                <h3>How?</h3>
+                <h2>How?</h2>
 
                 <p>Adam and Angela met early May 2017 to briefly discuss the possibility of collaborating together. The idea was loose, but the goal was to take photos of the island remotely, upload the images via the cellular network and access them from anywhere. We both shared connections to Newfoundland, and a passion for art and technology, so we set out to see what was possible.</p>
 
@@ -1118,11 +1118,11 @@ $infoHtml .= <<<HTML
 
                 <p>The entire system took us approximately 3 months to build. This includes the initial idea, research, system design, installation, and final production code. Below is a system diagram and an outline of all the hardware and software used to create Cloudberry. The Raspberry Pi field software is open source as <a href="https://github.com/adamsimms/cloudberry" target="_blank" rel="noopener noreferrer">Cloudberry</a>.</p>
 
-                <h3>The Cloudberry System</h3>
+                <h2>The Cloudberry System</h2>
 
                 <a href="https://www.figma.com/file/GvUAbr6vcpJ2Ruk1T1q4e20Z/Shutter-Island?node-id=35%3A116" target="_blank" rel="noopener noreferrer"><img src="{$imgInfo('cloudberry-system.jpg')}" class="img-fluid info_img info-system-diagram" alt="Cloudberry system diagram" width="1600" height="957" loading="lazy" decoding="async"></a>
 
-                <h3>Hardware</h3>
+                <h2>Hardware</h2>
 
                 <div class="hardware-accordion">
                     <details class="hardware-details">
@@ -1163,7 +1163,7 @@ $infoHtml .= <<<HTML
                     </details>
                 </div>
 
-                <h3>Installation</h3>
+                <h2>Installation</h2>
                 <p>During the second week of August, we embarked on our journey to install Cloudberry. The first task was to bring all of the solar power components to the island, which was a task that required four people to load the housing unit, batteries, and solar panel. It took approximately two days for Roger and Adam to install the entire system with constant readjustments.</p>
 
                 <img src="{$imgInfo('solar-install.jpg')}" class="img-fluid info_img" alt="Solar power installation" width="1000" height="1000" loading="lazy" decoding="async">
@@ -1183,7 +1183,7 @@ $infoHtml .= <<<HTML
         <div class="container">
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <img src="{$imgInfo('yay.jpg')}" class="img-fluid info_img" alt="Cloudberry creators" width="3000" height="2250" loading="lazy" decoding="async">
-                <h3>Who made Cloudberry?</h3>
+                <h2>Who made Cloudberry?</h2>
                 <ul class="people-list">
                     <li class="people-list-item">
                         <img class="people-list-photo" src="{$imgPeople('adam-simms.jpg')}" alt="" width="72" height="72" loading="lazy" decoding="async">
@@ -1216,17 +1216,17 @@ $infoHtml .= <<<HTML
     <div class="how_section" id="more">
         <div class="container">
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
-                <h3>Citations</h3>
+                <h2>Citations</h2>
                 <p>Researchers and publications are welcome to use Cloudberry photographs with attribution. The archive is complete and no longer receiving new images.</p>
                 <p>The suggested format below follows the <strong>Chicago Manual of Style, Author-Date</strong> system, adapted for a born-digital photograph archive (similar to citing a website or online collection).</p>
-                <h4>Citing the entire archive</h4>
+                <h3>Citing the entire archive</h3>
                 <p>Use this when referring to the project or website as a whole.</p>
 {$archiveCitationBlock}
-                <h4>Citing a specific photograph</h4>
+                <h3>Citing a specific photograph</h3>
                 <p>Open the image on the site, expand the details panel, and note the <strong>date and time</strong>, <strong>photo number</strong> (shown as the large title), and <strong>filename</strong> from the page URL (<code>?filename=…</code>). Substitute those values into the template below.</p>
 {$photoCitationBlock}
 
-                <h3>Keyboard shortcuts</h3>
+                <h2>Keyboard shortcuts</h2>
                 <ul class="keyboard-shortcuts">
                     <li>
                         <span class="keyboard-shortcuts-keys"><kbd>←</kbd> <kbd>→</kbd></span>
@@ -1242,7 +1242,7 @@ $infoHtml .= <<<HTML
                     </li>
                 </ul>
 
-                <h3>Source</h3>
+                <h2>Source</h2>
                 <ul class="source-list">
                     <li>
                         <a href="https://github.com/adamsimms/cloudberry" target="_blank" rel="noopener noreferrer" class="link">Cloudberry</a>
@@ -1260,7 +1260,7 @@ $infoHtml .= <<<HTML
     <div class="contact_section" id="contact">
         <div class="container">
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
-                <h3>Contact</h3>
+                <h2>Contact</h2>
                 <p><!--email_off--><a href="#" class="link" data-email-mailto>Email</a><!--/email_off--></p>
                 <img src="{$imgInfo('boat.jpg')}" class="img-fluid info_img" alt="Boat approaching Pinchard's Island" width="1400" height="918" loading="lazy" decoding="async">
                 <div class="copyright">
