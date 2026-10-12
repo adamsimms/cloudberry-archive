@@ -1261,7 +1261,7 @@ $infoHtml .= <<<HTML
         <div class="container">
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>Contact</h3>
-                <p><a href="mailto:hello@adamsimms.xyz" class="link">hello@adamsimms.xyz</a></p>
+                <p><!--email_off--><a href="#" class="link" data-email-mailto>Email</a><!--/email_off--></p>
                 <img src="{$imgInfo('boat.jpg')}" class="img-fluid info_img" alt="Boat approaching Pinchard's Island" width="1400" height="918" loading="lazy" decoding="async">
                 <div class="copyright">
                     Copyright &copy; 2017&ndash;{$copyrightYear}
