@@ -1,52 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Closed photographic archive — pages change rarely.
+  Legacy citation map for pinchards.is (redirects to art).
+  Canonical crawl surface is art.adamsimms.xyz (Astro sitemap + archive pages).
   Omitted on purpose:
   - /jam/ (exhibition kiosk; noindex)
   - Per-photo viewer URLs (?filename=…) — thousands of deep links; crawl via gallery
-  - viewer-photo.php JSON API
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.pinchards.is/</loc>
-    <lastmod>2026-07-12</lastmod>
+    <loc>https://art.adamsimms.xyz/cloudberry/archive/</loc>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>yearly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.pinchards.is/gallery.php</loc>
-    <lastmod>2026-07-12</lastmod>
+    <loc>https://art.adamsimms.xyz/cloudberry/archive/gallery/</loc>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.pinchards.is/info.php</loc>
-    <lastmod>2026-07-13</lastmod>
+    <loc>https://art.adamsimms.xyz/cloudberry/archive/info/</loc>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.pinchards.is/maps/</loc>
-    <lastmod>2026-07-12</lastmod>
+    <loc>https://art.adamsimms.xyz/maps/</loc>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.pinchards.is/maps/trees/</loc>
-    <lastmod>2026-07-12</lastmod>
+    <loc>https://art.adamsimms.xyz/maps/trees/</loc>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.pinchards.is/maps/resettled/</loc>
-    <lastmod>2026-07-12</lastmod>
+    <loc>https://art.adamsimms.xyz/maps/resettled/</loc>
+    <lastmod>2026-07-14</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.pinchards.is/light-house/</loc>
-    <lastmod>2026-07-12</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
   </url>
 </urlset>

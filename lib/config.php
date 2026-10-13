@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 /**
- * Core site settings (S3 + CloudFront). Edit here instead of scattering URLs in PHP templates.
+ * Legacy PHP runtime settings (pre–static archive). Production gallery CDN hosts are
+ * Cloudflare R2 via catalog `cdn.full` / `cdn.thumb` (see scripts/build-catalog.php).
  */
 return [
 	's3_bucket_full' => 'shutter-island',

@@ -271,4 +271,15 @@
             document.body.removeChild(textarea);
         }
     }
+
+    // Assemble mailto in the browser so Cloudflare email obfuscation cannot
+    // rewrite a static mailto into a broken /cdn-cgi/l/email-protection link.
+    document.querySelectorAll('[data-email-mailto]').forEach(function (node) {
+        if (!(node instanceof HTMLAnchorElement)) return;
+        var address = atob('aGVsbG9AYWRhbXNpbW1zLnh5eg==');
+        node.href = 'mailto:' + address;
+        if (!node.hasAttribute('data-email-keep-label')) {
+            node.textContent = address;
+        }
+    });
 })();

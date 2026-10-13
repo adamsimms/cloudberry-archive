@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.pinchards.is/sitemap.xml
+Sitemap: https://art.adamsimms.xyz/sitemap-index.xml

@@ -10,7 +10,7 @@ function pinchard_h(?string $value): string
 
 /**
  * Minimal branded unavailable page (503 by default) with a quiet CSS fade-in.
- * Used when gallery/S3/config cannot serve the requested surface.
+ * Used when gallery/config cannot serve the requested surface.
  */
 function pinchard_unavailable_page(string $message, int $status = 503): never
 {
@@ -172,11 +172,11 @@ function pinchard_show_time(string $date): string
 	return $dt->format('H:i');
 }
 
-/** Scheme + host for absolute URLs (e.g. https://www.pinchards.is). */
+/** Scheme + host for absolute URLs (e.g. https://art.adamsimms.xyz). */
 function pinchard_site_origin(): string
 {
 	$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-	$host = $_SERVER['HTTP_HOST'] ?? 'www.pinchards.is';
+	$host = $_SERVER['HTTP_HOST'] ?? 'art.adamsimms.xyz';
 
 	return $scheme . '://' . $host;
 }
@@ -212,7 +212,7 @@ function pinchard_canonical_url(): string
 /** Default Open Graph preview image for site pages. */
 function pinchard_default_og_image(): string
 {
-	return 'https://www.pinchards.is/images/info/pano.jpg';
+	return 'https://art.adamsimms.xyz/cloudberry/archive/images/info/pano.jpg';
 }
 
 /**
@@ -569,12 +569,12 @@ function pinchard_cloudberry_archive_span(array $photos): ?array
 /** About-page meta description including archive dates when available. */
 function pinchard_cloudberry_info_description(?array $archiveSpan): string
 {
-	$base = 'Cloudberry was a solar-powered, off-the-grid photography project that documented Pinchard\'s Island, Newfoundland';
+	$base = 'Cloudberry: solar-powered hourly photographs of Pinchard\'s Island, Newfoundland';
 	if ($archiveSpan !== null && isset($archiveSpan['range_compact'])) {
-		return $base . ' (' . $archiveSpan['range_compact'] . ') — one photograph per hour.';
+		return $base . ' (' . $archiveSpan['range_compact'] . ').';
 	}
 
-	return $base . ' — one photograph per hour.';
+	return $base . '.';
 }
 
 /** Gallery meta description including archive dates when available. */

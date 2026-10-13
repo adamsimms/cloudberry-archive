@@ -139,6 +139,10 @@
 
             function loadPhoto(img) {
                 if (img.dataset.loading) return;
+                if (img.getAttribute('src') && !img.getAttribute('data-src')) {
+                    markLoaded(img);
+                    return;
+                }
                 img.dataset.loading = '1';
                 var src = img.getAttribute('data-src');
                 if (!src) return;
@@ -172,8 +176,11 @@
                 photos.forEach(function(img) {
                     photoObserver.observe(img);
                 });
+                // Eager first-column thumbs already have src — mark them loaded.
+                scrollEl.querySelectorAll('.gallery-photo[src]:not([data-src])').forEach(markLoaded);
             } else {
                 photos.forEach(loadPhoto);
+                scrollEl.querySelectorAll('.gallery-photo[src]:not([data-src])').forEach(markLoaded);
             }
 
             function endDrag() {

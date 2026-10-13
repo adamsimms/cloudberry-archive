@@ -283,7 +283,26 @@
     }
 
     function imageUrl(filename) {
+        var viewBase = typeof cfg.cdnViewUrl === 'string' && cfg.cdnViewUrl
+            ? cfg.cdnViewUrl
+            : (cfg.cdnUrl + 'view/');
+        return viewBase + filename;
+    }
+
+    function thumbUrl(filename) {
+        if (typeof cfg.cdnThumbUrl === 'string' && cfg.cdnThumbUrl) {
+            return cfg.cdnThumbUrl + filename;
+        }
+        return imageUrl(filename);
+    }
+
+    function fullImageUrl(filename) {
         return cfg.cdnUrl + filename;
+    }
+
+    function resolveDisplayUrl(filename) {
+        // Prefer 1280w view derivative; fall back to thumb (never the 4MB master).
+        return imageUrl(filename);
     }
 
     function setPlaceholderUnderlay(url) {
@@ -862,13 +881,35 @@
     }
 
     function initInitialPhoto() {
-        var largeUrl = placeholder.dataset.large;
+        var existing = placeholder.querySelector('img.viewer-photo-main');
+        var largeUrl = placeholder.dataset.large || (cfg.currentFilename ? resolveDisplayUrl(cfg.currentFilename) : '');
+        var alt = placeholder.dataset.alt || '';
+
+        if (existing) {
+            currentMainImg = existing;
+            if (!existing.getAttribute('src') && largeUrl) {
+                existing.src = largeUrl;
+            }
+            existing.classList.add('loaded');
+            existing.style.opacity = '1';
+            setPlaceholderUnderlay(existing.currentSrc || existing.src || largeUrl);
+            prefetchAdjacent();
+            // If the view derivative 404s, fall back to thumb (not the 4MB master).
+            existing.addEventListener('error', function onViewError() {
+                existing.removeEventListener('error', onViewError);
+                var thumb = placeholder.dataset.thumb || (cfg.currentFilename ? thumbUrl(cfg.currentFilename) : '');
+                if (thumb && existing.src !== thumb) {
+                    existing.src = thumb;
+                }
+            });
+            return;
+        }
+
         if (!largeUrl) {
             return;
         }
 
-        var alt = placeholder.dataset.alt || '';
-        // Start on white; fade the full image in once it is ready.
+        // Start on white; fade the display image in once it is ready.
         placeholder.style.backgroundImage = '';
         preloadUrl(largeUrl).then(function() {
             var imgLarge = document.createElement('img');
@@ -900,6 +941,17 @@
             waitForImagePaint(imgLarge).then(show);
             currentMainImg = imgLarge;
             prefetchAdjacent();
+        }).catch(function() {
+            var thumb = placeholder.dataset.thumb || (cfg.currentFilename ? thumbUrl(cfg.currentFilename) : '');
+            if (!thumb) return;
+            var img = document.createElement('img');
+            img.src = thumb;
+            img.alt = alt;
+            img.className = 'viewer-photo-main loaded';
+            img.style.opacity = '1';
+            placeholder.appendChild(img);
+            currentMainImg = img;
+            setPlaceholderUnderlay(thumb);
         });
     }
 

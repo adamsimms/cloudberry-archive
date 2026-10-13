@@ -2291,12 +2291,12 @@ body.info-page .info-main #more {
     padding-bottom: 24px;
 }
 
-body.info-page .info-main h3 {
+body.info-page .info-main h2 {
     margin-top: 0;
     margin-bottom: 1rem;
 }
 
-body.info-page .info-main h3:not(:first-child) {
+body.info-page .info-main h2:not(:first-child) {
     margin-top: 3.5rem;
 }
 
@@ -2305,8 +2305,14 @@ body.info-page .info-main .info-system-diagram {
     margin-bottom: 2.5rem;
 }
 
-body.info-page .info-main .info-system-diagram + h3 {
+body.info-page .info-main .info-system-diagram + h2 {
     margin-top: 0;
+}
+
+body.info-page .info-main h3 {
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.1em;
 }
 
 body.info-page .info-main > .container {
