@@ -897,6 +897,8 @@
             transitioning = false;
             if (playing && !scrubbing) {
                 scheduleAdvance();
+            } else if (cfg.currentFilename && !urlsMatch(currentMainImg, fullImageUrl(cfg.currentFilename))) {
+                sharpenSettledFrame();
             }
         });
     }
@@ -907,6 +909,32 @@
 
         function go(url, fade) {
             return crossfadeTo(url, '', generation, fade);
+        }
+
+        // Playback is one long dissolve into the next frame, then the next.
+        // A hard cut to a thumbnail reads as the play button doing nothing.
+        if (playing && quality !== 'scrub' && quality !== 'preview') {
+            var playFade = activeFadeMs();
+            return Promise.race([
+                preloadUrl(full).then(function() {
+                    return full;
+                }),
+                new Promise(function(resolve) {
+                    window.setTimeout(function() {
+                        resolve(thumb);
+                    }, 350);
+                })
+            ]).then(function(url) {
+                if (generation !== navGeneration) {
+                    return;
+                }
+                return go(url, playFade);
+            }).catch(function() {
+                if (generation !== navGeneration) {
+                    return;
+                }
+                return go(thumb, playFade);
+            });
         }
 
         if (quality === 'preview' || quality === 'scrub') {
@@ -959,6 +987,26 @@
             return go(full, upgradeFade).catch(function() {
                 // Thumb (or the previous frame) stays up if the master fails.
             });
+        });
+    }
+
+    function sharpenSettledFrame() {
+        if (!cfg.currentFilename || playing) {
+            return;
+        }
+        var full = fullImageUrl(cfg.currentFilename);
+        if (urlsMatch(currentMainImg, full)) {
+            return;
+        }
+        var generation = ++navGeneration;
+        transitioning = true;
+        crossfadeTo(full, '', generation, 200).catch(function() {
+            return null;
+        }).finally(function() {
+            if (generation !== navGeneration) {
+                return;
+            }
+            transitioning = false;
         });
     }
 
