@@ -271,7 +271,7 @@
         parent.style.backgroundRepeat = 'no-repeat';
     }
 
-    function crossfadeViewer(oldImg, newImg, direction, durationMs, ease) {
+    function crossfadeViewer(oldImg, newImg, direction, durationMs) {
         var duration = Math.max(0, (durationMs || 1000) / 1000);
         var parent = newImg && newImg.parentNode;
 
@@ -310,7 +310,7 @@
             gsap.fromTo(newImg, { opacity: 0 }, {
                 opacity: 1,
                 duration: duration,
-                ease: ease || 'power1.inOut',
+                ease: 'power1.inOut',
                 onComplete: function () {
                     if (oldImg && oldImg.parentNode) {
                         oldImg.parentNode.removeChild(oldImg);

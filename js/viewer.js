@@ -9,10 +9,9 @@
     var motion = window.pinchardMotion;
     var BROWSE_FADE_MS = cfg.fadeMs != null ? cfg.fadeMs : 1000;
     var INTRO_FADE_MS = cfg.introFadeMs != null ? cfg.introFadeMs : 700;
-    // URL ?fade= / ?display= still win. The baked 8s dissolve stays near
-    // opacity 0 for the first seconds, so the play button reads as dead.
-    var PLAY_FADE_MS = cfg.playFadeFromUrl && cfg.playFadeMs != null ? cfg.playFadeMs : 1000;
-    var PLAY_DISPLAY_MS = cfg.playDisplayFromUrl && cfg.playDisplayMs != null ? cfg.playDisplayMs : 1400;
+    // Exhibition playback dissolves one full photograph into the next over 8s.
+    var PLAY_FADE_MS = cfg.playFadeMs != null ? cfg.playFadeMs : 8000;
+    var PLAY_DISPLAY_MS = cfg.playDisplayMs != null ? cfg.playDisplayMs : 0;
     var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reducedMotion) {
         BROWSE_FADE_MS = 0;
@@ -361,13 +360,16 @@
     function prefetchAdjacent() {
         var prev = adjacentFilename(-1);
         var next = adjacentFilename(1);
-        // Thumbs only. Full masters are ~6MB and most 1280px view files 404.
-        if (prev && prev !== cfg.currentFilename) {
-            preloadUrl(thumbUrl(prev));
+        // Playback dissolves full photographs, so fetch the next original during
+        // the current fade. Browsing can wait and use the small thumb first.
+        function warm(filename) {
+            if (!filename || filename === cfg.currentFilename) {
+                return;
+            }
+            preloadUrl(playing ? fullImageUrl(filename) : thumbUrl(filename));
         }
-        if (next && next !== cfg.currentFilename) {
-            preloadUrl(thumbUrl(next));
-        }
+        warm(prev);
+        warm(next);
     }
 
     function urlsMatch(img, url) {
@@ -655,7 +657,7 @@
                     && old && fadeMs > 0;
 
                 if (useMotion) {
-                    return motion.crossfadeViewer(old, newImg, navDirection, fadeMs, playing ? 'power1.out' : undefined).then(function() {
+                    return motion.crossfadeViewer(old, newImg, navDirection, fadeMs).then(function() {
                         if (expectedGeneration !== navGeneration) {
                             return;
                         }
@@ -929,24 +931,13 @@
             return crossfadeTo(url, '', generation, fade);
         }
 
-        // Playback dissolves into the next frame over about a second, holds, then continues.
+        // Playback is the exhibition dissolve: the current photograph stays
+        // opaque while the next full-resolution file fades in over it.
+        // A thumb-only frame never sharpens, because the next advance starts
+        // as soon as this fade ends.
         if (playing && quality !== 'scrub' && quality !== 'preview') {
             var playFade = activeFadeMs();
-            return Promise.race([
-                preloadUrl(full).then(function() {
-                    return full;
-                }),
-                new Promise(function(resolve) {
-                    window.setTimeout(function() {
-                        resolve(thumb);
-                    }, 80);
-                })
-            ]).then(function(url) {
-                if (generation !== navGeneration) {
-                    return;
-                }
-                return go(url, playFade);
-            }).catch(function() {
+            return go(full, playFade).catch(function() {
                 if (generation !== navGeneration) {
                     return;
                 }
