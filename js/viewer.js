@@ -909,15 +909,32 @@
             return crossfadeTo(url, '', generation, fade);
         }
 
-        if (quality === 'preview') {
+        if (quality === 'preview' || quality === 'scrub') {
             if (urlsMatch(currentMainImg, thumb) || urlsMatch(currentMainImg, full)) {
-                return Promise.resolve();
+                if (quality === 'preview' || urlsMatch(currentMainImg, full)) {
+                    return Promise.resolve();
+                }
             }
-            return go(thumb, 0).catch(function() {
+            var sceneFade = playing ? activeFadeMs() : BROWSE_FADE_MS;
+            var fullReady = preloadUrl(full).catch(function() {
+                return null;
+            });
+            var shown = go(thumb, sceneFade).catch(function() {
                 if (generation !== navGeneration) {
                     return;
                 }
-                return go(full, 0);
+                return go(full, sceneFade);
+            });
+            if (quality === 'preview') {
+                return shown;
+            }
+            return shown.then(function() {
+                return fullReady;
+            }).then(function() {
+                if (generation !== navGeneration || urlsMatch(currentMainImg, full)) {
+                    return;
+                }
+                return go(full, playing ? activeFadeMs() : 200).catch(function() {});
             });
         }
 
@@ -1201,11 +1218,14 @@
                 return;
             }
             updateTimelineUi(idx, { fromScrub: true });
+            if (!commit) {
+                return;
+            }
             navigateToFilename(entry.f, {
-                history: commit ? 'replace' : 'none',
+                history: 'replace',
                 interrupt: true,
-                force: !!commit,
-                quality: commit ? 'full' : 'preview'
+                force: true,
+                quality: 'scrub'
             });
         }
 
