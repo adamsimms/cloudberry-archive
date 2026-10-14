@@ -9,7 +9,7 @@ declare(strict_types=1);
  *   filename=…   current photograph
  *   play=1       start autoplay (loops the archive)
  *   display=SEC  hold time after each exhibition crossfade
- *   fade=SEC     exhibition crossfade duration (default 8)
+ *   fade=SEC     exhibition crossfade duration (default 1)
  *   kiosk=1      start chrome-hidden / fullscreen mode (toggle with F)
  */
 
@@ -24,8 +24,8 @@ if (isset($_GET['fn']) && $_GET['fn'] !== '') {
 	exit;
 }
 
-$playDisplay = 0.0;
-$playFade = 8.0;
+$playDisplay = 1.4;
+$playFade = 1.0;
 $playDisplayFromUrl = false;
 $playFadeFromUrl = false;
 if (isset($_GET['display']) && $_GET['display'] !== '') {
