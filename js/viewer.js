@@ -604,13 +604,10 @@
         if (!img) {
             return Promise.resolve();
         }
-        if (img.complete && img.naturalWidth > 0) {
+        // decode() can sit unresolved after the pixels exist, which leaves the
+        // incoming photograph at opacity 0 and makes play look frozen.
+        if (img.naturalWidth > 0) {
             return Promise.resolve();
-        }
-        if (typeof img.decode === 'function') {
-            return img.decode().catch(function() {
-                return null;
-            });
         }
         return new Promise(function(resolve) {
             img.onload = function() { resolve(); };
@@ -942,7 +939,7 @@
                 new Promise(function(resolve) {
                     window.setTimeout(function() {
                         resolve(thumb);
-                    }, 350);
+                    }, 80);
                 })
             ]).then(function(url) {
                 if (generation !== navGeneration) {
