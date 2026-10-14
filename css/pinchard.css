@@ -1064,7 +1064,7 @@ option {
     min-width: 0;
     gap: 12px;
     padding: 0 4px;
-    touch-action: none;
+    touch-action: pan-y;
 }
 
 .viewer-timeline-date {
@@ -1112,7 +1112,7 @@ option {
     padding: 0;
     background: transparent;
     cursor: pointer;
-    touch-action: none;
+    touch-action: auto;
 }
 
 .viewer-timeline-range:focus {
