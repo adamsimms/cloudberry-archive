@@ -9,13 +9,18 @@
     var motion = window.pinchardMotion;
     var BROWSE_FADE_MS = cfg.fadeMs != null ? cfg.fadeMs : 1000;
     var INTRO_FADE_MS = cfg.introFadeMs != null ? cfg.introFadeMs : 700;
-    var PLAY_FADE_MS = cfg.playFadeMs != null ? cfg.playFadeMs : 8000;
-    var PLAY_DISPLAY_MS = cfg.playDisplayMs != null ? cfg.playDisplayMs : 0;
+    // URL ?fade= / ?display= still win. The baked 8s dissolve stays near
+    // opacity 0 for the first seconds, so the play button reads as dead.
+    var PLAY_FADE_MS = cfg.playFadeFromUrl && cfg.playFadeMs != null ? cfg.playFadeMs : 1000;
+    var PLAY_DISPLAY_MS = cfg.playDisplayFromUrl && cfg.playDisplayMs != null ? cfg.playDisplayMs : 1400;
     var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reducedMotion) {
         BROWSE_FADE_MS = 0;
         INTRO_FADE_MS = 0;
         PLAY_FADE_MS = 0;
+        if (PLAY_DISPLAY_MS < 800) {
+            PLAY_DISPLAY_MS = 1200;
+        }
     }
 
     var placeholder = document.getElementById('preview_image');
@@ -653,7 +658,7 @@
                     && old && fadeMs > 0;
 
                 if (useMotion) {
-                    return motion.crossfadeViewer(old, newImg, navDirection, fadeMs).then(function() {
+                    return motion.crossfadeViewer(old, newImg, navDirection, fadeMs, playing ? 'power1.out' : undefined).then(function() {
                         if (expectedGeneration !== navGeneration) {
                             return;
                         }
@@ -790,9 +795,25 @@
         if (options.syncUrl !== false) {
             updateHistory(cfg.currentFilename, 'replace');
         }
-        if (playing && !scrubbing && !transitioning) {
-            scheduleAdvance();
+        if (!playing || scrubbing) {
+            return;
         }
+        // A press should leave the current photograph immediately. Waiting out
+        // an in-flight full-resolution upgrade looks like the button did nothing.
+        if (options.immediate && transitioning) {
+            navGeneration += 1;
+            cancelInFlightVisualTransition();
+        }
+        if (transitioning) {
+            return;
+        }
+        if (options.immediate) {
+            advanceTimer = setTimeout(function() {
+                advanceAutoplay();
+            }, 0);
+            return;
+        }
+        scheduleAdvance();
     }
 
     function cancelInFlightVisualTransition() {
@@ -911,8 +932,7 @@
             return crossfadeTo(url, '', generation, fade);
         }
 
-        // Playback is one long dissolve into the next frame, then the next.
-        // A hard cut to a thumbnail reads as the play button doing nothing.
+        // Playback dissolves into the next frame over about a second, holds, then continues.
         if (playing && quality !== 'scrub' && quality !== 'preview') {
             var playFade = activeFadeMs();
             return Promise.race([
@@ -1190,7 +1210,7 @@
 
     if (playToggle) {
         playToggle.addEventListener('click', function() {
-            setPlaying(!playing);
+            setPlaying(!playing, { immediate: true });
         });
     }
 
@@ -1232,7 +1252,7 @@
 
         if (e.key === ' ' || e.key === 'Spacebar') {
             e.preventDefault();
-            setPlaying(!playing);
+            setPlaying(!playing, { immediate: true });
             return;
         }
 
