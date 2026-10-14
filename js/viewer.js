@@ -445,11 +445,22 @@
         }
         var position = idx + 1;
         var count = cfg.timeline.entries.length;
+        var label = 'Photograph ' + position + ' of ' + count + ', ' + entry.d;
         timelineRange.value = String(idx);
         timelineRange.setAttribute('aria-valuenow', String(position));
-        timelineRange.setAttribute('aria-valuetext', 'Photograph ' + position + ' of ' + count + ', ' + entry.d);
+        timelineRange.setAttribute('aria-valuetext', label);
+        timelineRange.setAttribute('aria-label', label);
         if (timelinePosition) {
             timelinePosition.textContent = entry.d;
+        }
+        // A scripted value change leaves the WebKit thumb painted at the old
+        // time. Reinserting the control repaints it. Skip that while dragging.
+        if (!options.fromScrub && timelineRange.parentNode) {
+            var track = timelineRange.parentNode;
+            var next = timelineRange.nextSibling;
+            track.removeChild(timelineRange);
+            track.insertBefore(timelineRange, next);
+            timelineRange.value = String(idx);
         }
     }
 
@@ -537,23 +548,12 @@
         updateDocumentTitle(payload.photoTitle);
         updateMap(payload);
         if (typeof payload.timelineIndex === 'number') {
-            updateTimelineUi(payload.timelineIndex);
             if (payload.showDate && cfg.timeline && cfg.timeline.entries && cfg.timeline.entries[payload.timelineIndex]) {
                 cfg.timeline.entries[payload.timelineIndex].d = payload.showDate;
-                if (timelinePosition) {
-                    if (canFade && typeof motion.fadeText === 'function') {
-                        motion.fadeText(timelinePosition, payload.showDate);
-                    } else {
-                        timelinePosition.textContent = payload.showDate;
-                    }
-                }
             }
+            updateTimelineUi(payload.timelineIndex);
         } else if (payload.showDate && timelinePosition) {
-            if (canFade && typeof motion.fadeText === 'function') {
-                motion.fadeText(timelinePosition, payload.showDate);
-            } else {
-                timelinePosition.textContent = payload.showDate;
-            }
+            timelinePosition.textContent = payload.showDate;
         }
     }
 
@@ -945,32 +945,57 @@
             });
         }
 
-        if (quality === 'preview' || quality === 'scrub') {
+        if (quality === 'preview') {
             if (urlsMatch(currentMainImg, thumb) || urlsMatch(currentMainImg, full)) {
-                if (quality === 'preview' || urlsMatch(currentMainImg, full)) {
-                    return Promise.resolve();
-                }
+                return Promise.resolve();
             }
-            var sceneFade = playing ? activeFadeMs() : BROWSE_FADE_MS;
-            var fullReady = preloadUrl(full).catch(function() {
-                return null;
-            });
-            var shown = go(thumb, sceneFade).catch(function() {
+            return go(thumb, 0).catch(function() {
                 if (generation !== navGeneration) {
                     return;
                 }
-                return go(full, sceneFade);
+                return go(full, 0);
             });
-            if (quality === 'preview') {
-                return shown;
+        }
+
+        // A seek is a browse dissolve into that photograph, including while
+        // playback is running. The 8s exhibition fade would hold the thumbnail.
+        if (quality === 'scrub') {
+            if (urlsMatch(currentMainImg, full)) {
+                return Promise.resolve();
             }
-            return shown.then(function() {
-                return fullReady;
-            }).then(function() {
-                if (generation !== navGeneration || urlsMatch(currentMainImg, full)) {
+            var seekFade = BROWSE_FADE_MS;
+            var fullReady = preloadUrl(full).catch(function() {
+                return null;
+            });
+            return Promise.race([
+                fullReady.then(function(ok) {
+                    return ok ? full : null;
+                }),
+                new Promise(function(resolve) {
+                    window.setTimeout(function() {
+                        resolve(null);
+                    }, 100);
+                })
+            ]).then(function(readyUrl) {
+                if (generation !== navGeneration) {
                     return;
                 }
-                return go(full, playing ? activeFadeMs() : 200).catch(function() {});
+                if (readyUrl) {
+                    return go(readyUrl, seekFade);
+                }
+                return go(thumb, seekFade).catch(function() {
+                    if (generation !== navGeneration) {
+                        return;
+                    }
+                    return go(full, seekFade);
+                }).then(function() {
+                    return fullReady;
+                }).then(function() {
+                    if (generation !== navGeneration || urlsMatch(currentMainImg, full)) {
+                        return;
+                    }
+                    return go(full, 200).catch(function() {});
+                });
             });
         }
 
