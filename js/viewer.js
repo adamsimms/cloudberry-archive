@@ -301,8 +301,8 @@
     }
 
     function resolveDisplayUrl(filename) {
-        // Prefer 1280w view derivative; fall back to thumb (never the 4MB master).
-        return imageUrl(filename);
+        // Masters are 4000px. The 1280px view set is incomplete and soft on retina.
+        return fullImageUrl(filename);
     }
 
     function setPlaceholderUnderlay(url) {
@@ -344,7 +344,10 @@
         prefetchCache[url] = new Promise(function(resolve, reject) {
             var img = new Image();
             img.onload = function() { resolve(img); };
-            img.onerror = reject;
+            img.onerror = function() {
+                delete prefetchCache[url];
+                reject(new Error('Image failed'));
+            };
             img.src = url;
         });
         return prefetchCache[url];
@@ -353,12 +356,33 @@
     function prefetchAdjacent() {
         var prev = adjacentFilename(-1);
         var next = adjacentFilename(1);
+        // Thumbs only. Full masters are ~6MB and most 1280px view files 404.
         if (prev && prev !== cfg.currentFilename) {
-            preloadUrl(imageUrl(prev));
+            preloadUrl(thumbUrl(prev));
         }
         if (next && next !== cfg.currentFilename) {
-            preloadUrl(imageUrl(next));
+            preloadUrl(thumbUrl(next));
         }
+    }
+
+    function urlsMatch(img, url) {
+        if (!img || !url) {
+            return false;
+        }
+        return img.src === url || img.currentSrc === url;
+    }
+
+    function bindExistingMainImage() {
+        if (currentMainImg && currentMainImg.parentNode === placeholder) {
+            return;
+        }
+        var existing = placeholder.querySelector('img.viewer-photo-main');
+        if (!existing) {
+            return;
+        }
+        currentMainImg = existing;
+        existing.classList.add('loaded');
+        existing.style.opacity = '1';
     }
 
     function setNavLinkState(link, filename) {
@@ -418,11 +442,7 @@
         timelineRange.setAttribute('aria-valuenow', String(position));
         timelineRange.setAttribute('aria-valuetext', 'Photograph ' + position + ' of ' + count + ', ' + entry.d);
         if (timelinePosition) {
-            if (motion && typeof motion.fadeText === 'function') {
-                motion.fadeText(timelinePosition, entry.d);
-            } else {
-                timelinePosition.textContent = entry.d;
-            }
+            timelinePosition.textContent = entry.d;
         }
     }
 
@@ -579,13 +599,13 @@
         if (!img) {
             return Promise.resolve();
         }
+        if (img.complete && img.naturalWidth > 0) {
+            return Promise.resolve();
+        }
         if (typeof img.decode === 'function') {
             return img.decode().catch(function() {
                 return null;
             });
-        }
-        if (img.complete && img.naturalWidth > 0) {
-            return Promise.resolve();
         }
         return new Promise(function(resolve) {
             img.onload = function() { resolve(); };
@@ -593,8 +613,8 @@
         });
     }
 
-    function crossfadeTo(url, alt, generation) {
-        var fadeMs = activeFadeMs();
+    function crossfadeTo(url, alt, generation, fadeOverride) {
+        var fadeMs = fadeOverride == null ? activeFadeMs() : fadeOverride;
         var expectedGeneration = generation == null ? navGeneration : generation;
         return preloadUrl(url).then(function() {
             if (expectedGeneration !== navGeneration) {
@@ -640,6 +660,21 @@
                         currentMainImg = newImg;
                         placeholder.dataset.large = url;
                     });
+                }
+
+                // Zero-length swaps must paint immediately. A deferred frame leaves
+                // the previous photograph on screen if animation frames are late.
+                if (!(old && fadeMs > 0)) {
+                    newImg.classList.add('loaded');
+                    newImg.style.opacity = '1';
+                    newImg.style.zIndex = '2';
+                    if (old && old.parentNode) {
+                        old.parentNode.removeChild(old);
+                    }
+                    setPlaceholderUnderlay(url);
+                    currentMainImg = newImg;
+                    placeholder.dataset.large = url;
+                    return Promise.resolve();
                 }
 
                 return new Promise(function(resolve) {
@@ -809,6 +844,7 @@
         }
 
         clearAdvanceTimer();
+        bindExistingMainImage();
         // Invalidate any in-flight fade before visual cancel so its callbacks no-op.
         var myGeneration = ++navGeneration;
         if (transitioning && options.interrupt) {
@@ -835,7 +871,7 @@
         syncTimelineToFilename(filename);
 
         var metaPromise = fetchMetadata(filename);
-        var fadePromise = crossfadeTo(imageUrl(filename), '', myGeneration);
+        var fadePromise = presentFrame(filename, myGeneration, options.quality || 'full');
 
         return Promise.all([metaPromise, fadePromise]).then(function(results) {
             if (myGeneration !== navGeneration) {
@@ -862,6 +898,50 @@
             if (playing && !scrubbing) {
                 scheduleAdvance();
             }
+        });
+    }
+
+    function presentFrame(filename, generation, quality) {
+        var thumb = thumbUrl(filename);
+        var full = fullImageUrl(filename);
+
+        function go(url, fade) {
+            return crossfadeTo(url, '', generation, fade);
+        }
+
+        if (quality === 'preview') {
+            if (urlsMatch(currentMainImg, thumb) || urlsMatch(currentMainImg, full)) {
+                return Promise.resolve();
+            }
+            return go(thumb, 0).catch(function() {
+                if (generation !== navGeneration) {
+                    return;
+                }
+                return go(full, 0);
+            });
+        }
+
+        if (urlsMatch(currentMainImg, full)) {
+            return Promise.resolve();
+        }
+
+        var start = urlsMatch(currentMainImg, thumb)
+            ? Promise.resolve()
+            : go(thumb, 0).catch(function() {
+                if (generation !== navGeneration) {
+                    return;
+                }
+                return go(full, 0);
+            });
+
+        return start.then(function() {
+            if (generation !== navGeneration || urlsMatch(currentMainImg, full)) {
+                return;
+            }
+            var upgradeFade = playing ? activeFadeMs() : 200;
+            return go(full, upgradeFade).catch(function() {
+                // Thumb (or the previous frame) stays up if the master fails.
+            });
         });
     }
 
@@ -1113,17 +1193,38 @@
     });
 
     if (timelineRange && cfg.timeline && cfg.timeline.entries && cfg.timeline.entries.length > 1) {
+        var scrubCommitTimer = 0;
+
+        function scrubToIndex(idx, commit) {
+            var entry = timelineEntry(idx);
+            if (!entry || !entry.f) {
+                return;
+            }
+            updateTimelineUi(idx, { fromScrub: true });
+            navigateToFilename(entry.f, {
+                history: commit ? 'replace' : 'none',
+                interrupt: true,
+                force: !!commit,
+                quality: commit ? 'full' : 'preview'
+            });
+        }
+
         timelineRange.addEventListener('input', function() {
-            updateTimelineUi(parseInt(timelineRange.value, 10), { fromScrub: true });
+            scrubbing = true;
+            clearAdvanceTimer();
+            var idx = parseInt(timelineRange.value, 10);
+            scrubToIndex(idx, false);
+            window.clearTimeout(scrubCommitTimer);
+            scrubCommitTimer = window.setTimeout(function() {
+                scrubbing = false;
+                scrubToIndex(parseInt(timelineRange.value, 10), true);
+            }, 160);
         });
 
         timelineRange.addEventListener('change', function() {
-            var entry = timelineEntry(parseInt(timelineRange.value, 10));
-            if (!entry || entry.f === cfg.currentFilename) {
-                return;
-            }
-            // Interrupt long play-mode crossfades so scrub always seeks.
-            navigateToFilename(entry.f, { history: 'push', interrupt: true });
+            window.clearTimeout(scrubCommitTimer);
+            scrubbing = false;
+            scrubToIndex(parseInt(timelineRange.value, 10), true);
         });
 
         timelineRange.addEventListener('pointerdown', function(e) {
@@ -1233,10 +1334,13 @@
     var deepLinkIndex = urlFilename ? indexFromFilename(urlFilename) : -1;
 
     if (deepLinkIndex >= 0 && urlFilename !== cfg.currentFilename) {
-        navigateToFilename(urlFilename, { history: 'none', force: true });
+        navigateToFilename(urlFilename, { history: 'none', force: true, quality: 'full' });
     } else {
         initInitialPhoto();
         updateNavLinks();
+        if (cfg.currentFilename && !urlsMatch(currentMainImg, fullImageUrl(cfg.currentFilename))) {
+            crossfadeTo(fullImageUrl(cfg.currentFilename), placeholder.dataset.alt || '', navGeneration, 200).catch(function() {});
+        }
     }
     updateFullscreenToggle();
     updateHistory(cfg.currentFilename, 'replace');
