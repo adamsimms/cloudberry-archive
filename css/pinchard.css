@@ -1836,6 +1836,32 @@ body {
   transition: none;
 }
 
+.photo-placeholder.is-soft-hold::before {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  z-index: 0;
+  background-image: inherit;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(42px);
+  transform: scale(1.08);
+}
+
+.photo-placeholder.is-soft-hold img.viewer-photo-main:not(.is-arriving) {
+  filter: blur(42px);
+  transform: scale(1.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photo-placeholder.is-soft-hold::before,
+  .photo-placeholder.is-soft-hold img.viewer-photo-main:not(.is-arriving) {
+    filter: none;
+    transform: none;
+  }
+}
+
 .photo-placeholder img.viewer-photo-main {
   object-fit: cover;
   width: 100%;
