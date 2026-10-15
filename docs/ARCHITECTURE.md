@@ -38,4 +38,4 @@ Capture-date and weather caches under `images/photo/.cache/` feed the builder wh
 
 ## Shipping
 
-Art CI checks out this repo, builds the static archive, copies into Pages `dist`, deploys. Optional `repository_dispatch` from this repo triggers that workflow. Details: art [CLOUDBERRY-ASSEMBLE.md](https://github.com/adamsimms/art.adamsimms.xyz/blob/main/docs/CLOUDBERRY-ASSEMBLE.md).
+Art CI checks out this repo, builds the static archive, copies into Pages `dist`, deploys. A push that changes the archive also pushes a commit to the art repo, and that starts the same workflow. Details: art [CLOUDBERRY-ASSEMBLE.md](https://github.com/adamsimms/art.adamsimms.xyz/blob/main/docs/CLOUDBERRY-ASSEMBLE.md).

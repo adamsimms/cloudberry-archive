@@ -21,7 +21,7 @@ The Cloudberry photographs are at once static and dynamic: though the frame rema
 1. Builders under `scripts/` emit `dist-archive/` (catalog + static pages).
 2. [art.adamsimms.xyz](https://github.com/adamsimms/art.adamsimms.xyz) assembles that tree into `/cloudberry/archive/` on Cloudflare Pages.
 3. JPEGs are served from R2 (`cloudberry-images.adamsimms.xyz` / `cloudberry-thumbs.adamsimms.xyz`).
-4. Push to this repo (archive-affecting paths) can `repository_dispatch` an art rebuild when `ART_DISPATCH_TOKEN` is set.
+4. A push that changes the archive pushes a commit to the art repo, which starts the Pages deploy.
 
 See art [docs/CLOUDBERRY-ASSEMBLE.md](https://github.com/adamsimms/art.adamsimms.xyz/blob/main/docs/CLOUDBERRY-ASSEMBLE.md) and [docs/PHASE5-CUTOVER.md](https://github.com/adamsimms/art.adamsimms.xyz/blob/main/docs/PHASE5-CUTOVER.md).
 
