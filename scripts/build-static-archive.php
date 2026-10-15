@@ -430,7 +430,7 @@ function page_head(string $title, array $options = []): string
 	$html .= "    <meta charset=\"utf-8\">\n";
 	$html .= "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n";
 	$html .= '    <meta name="description" content="' . h($description) . "\">\n";
-	$html .= "    <meta name=\"author\" content=\"Adam Simms & Angela Gabereaux\">\n";
+	$html .= "    <meta name=\"author\" content=\"Adam Simms\">\n";
 	if ($robots !== null && $robots !== '') {
 		$html .= '    <meta name="robots" content="' . h($robots) . "\">\n";
 	}
@@ -1126,7 +1126,7 @@ $infoHtml .= <<<HTML
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h2>How?</h2>
 
-                <p>Adam and Angela met early May 2017 to briefly discuss the possibility of collaborating together. The idea was loose, but the goal was to take photos of the island remotely, upload the images via the cellular network and access them from anywhere. We both shared connections to Newfoundland, and a passion for art and technology, so we set out to see what was possible.</p>
+                <p>In early May 2017 the goal was set: take photos of the island remotely, upload the images via the cellular network, and access them from anywhere.</p>
 
                 <p>Our initial research showed that there were a lot of possibilities as to how we could approach the project, but it was clear from the beginning that every decision would result in many constraints that would affect every decision we made. Power, temperature, weather, sunlight, data limits, storage, remoteness, were all components that constantly determined decision making and the methods in which we worked.</p>
 
@@ -1213,14 +1213,6 @@ $infoHtml .= <<<HTML
                             <div class="people-list-name">Adam Simms</div>
                             <div class="people-list-role">Photographer, designer, developer</div>
                             <a href="https://art.adamsimms.xyz/" target="_blank" rel="noopener noreferrer" class="link">www</a>
-                        </div>
-                    </li>
-                    <li class="people-list-item">
-                        <img class="people-list-photo" src="{$imgPeople('angela-gabereaux.jpg')}" alt="" width="72" height="72" loading="lazy" decoding="async">
-                        <div class="people-list-body">
-                            <div class="people-list-name">Angela Gabereaux</div>
-                            <div class="people-list-role">Software developer, systems engineer</div>
-                            <a href="https://www.ada-x.org/en/participants/angela-gabereau-2/" target="_blank" rel="noopener noreferrer" class="link">www</a>
                         </div>
                     </li>
                     <li class="people-list-item">
