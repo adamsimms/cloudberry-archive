@@ -233,7 +233,7 @@ function pinchard_seo_head_markup(string $title, string $description, array $opt
 	$ogType = $options['og_type'] ?? 'website';
 	$canonical = $options['canonical_url'] ?? pinchard_canonical_url();
 	$ogSiteName = $options['og_site_name'] ?? "Pinchard's Island";
-	$author = $options['author'] ?? 'Adam Simms & Angela Gabereaux';
+	$author = $options['author'] ?? 'Adam Simms';
 	$robots = $options['robots'] ?? null;
 
 	$t = pinchard_h($title);
