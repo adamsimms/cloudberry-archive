@@ -6,8 +6,8 @@ This repo does **not** publish a live document root. Production is Cloudflare Pa
 
 1. Change catalog assets / viewer / builders in this repo.
 2. Push to `main` (or open a PR; CI lints).
-3. With `ART_DISPATCH_TOKEN` set, `.github/workflows/trigger-art-rebuild.yml` asks art to rebuild.
-4. Art workflow: checkout → build static archive → assemble → `wrangler pages deploy`.
+3. `.github/workflows/trigger-art-rebuild.yml` pushes a commit to `adamsimms/art.adamsimms.xyz` with the `ART_DEPLOY_KEY` deploy key.
+4. That push starts the art workflow: checkout → build static archive → assemble → `wrangler pages deploy`.
 
 Manual art rebuild:
 

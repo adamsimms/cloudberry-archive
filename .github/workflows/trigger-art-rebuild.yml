@@ -1,11 +1,11 @@
 # Trigger art Cloudberry archive rebuild
 #
-# Art Pages listens for repository_dispatch type cloudberry-archive-rebuild
-# (see adamsimms/art.adamsimms.xyz .github/workflows/deploy.yml).
+# Art Pages deploys on a push to adamsimms/art.adamsimms.xyz main
+# (see that repo's .github/workflows/deploy.yml).
 #
-# One-time secret on this repo:
-#   ART_DISPATCH_TOKEN — fine-grained PAT (or classic) with permission to
-#   trigger workflows on adamsimms/art.adamsimms.xyz (Actions: write).
+# This hook pushes an empty commit there with a write deploy key, which
+# starts that workflow. The key is repository secret ART_DEPLOY_KEY.
+# It can only write to the art repo, and it does not expire.
 name: Trigger art archive rebuild
 
 on:
@@ -22,28 +22,42 @@ on:
       - 'vendor/bootstrap/**'
       - 'vendor/gsap/**'
       - 'favicon/**'
+      - '.github/workflows/trigger-art-rebuild.yml'
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   dispatch:
-    name: repository_dispatch → art.adamsimms.xyz
+    name: Push archive rebuild to art.adamsimms.xyz
     runs-on: ubuntu-latest
     steps:
-      - name: Dispatch cloudberry-archive-rebuild
+      - name: Push archive rebuild commit
         env:
-          ART_DISPATCH_TOKEN: ${{ secrets.ART_DISPATCH_TOKEN }}
+          ART_DEPLOY_KEY: ${{ secrets.ART_DEPLOY_KEY }}
         run: |
           set -euo pipefail
-          if [ -z "${ART_DISPATCH_TOKEN}" ]; then
-            echo "::warning::ART_DISPATCH_TOKEN is not set — skipping art rebuild dispatch."
-            echo "Create a fine-grained PAT with Actions: write on adamsimms/art.adamsimms.xyz"
-            echo "and store it as repository secret ART_DISPATCH_TOKEN."
-            exit 0
+          if [ -z "${ART_DEPLOY_KEY}" ]; then
+            echo "::error::ART_DEPLOY_KEY is not set. Add the write deploy key for adamsimms/art.adamsimms.xyz as this secret."
+            exit 1
           fi
-          curl -sS -X POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${ART_DISPATCH_TOKEN}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/adamsimms/art.adamsimms.xyz/dispatches" \
-            -d "{\"event_type\":\"cloudberry-archive-rebuild\",\"client_payload\":{\"source\":\"pinchards.is\",\"sha\":\"${GITHUB_SHA}\",\"ref\":\"${GITHUB_REF}\"}}"
-          echo "Dispatched cloudberry-archive-rebuild to art.adamsimms.xyz (sha ${GITHUB_SHA})"
+          install -m 700 -d "${HOME}/.ssh"
+          printf '%s\n' "${ART_DEPLOY_KEY}" > "${HOME}/.ssh/art_deploy_key"
+          chmod 600 "${HOME}/.ssh/art_deploy_key"
+          ssh-keyscan -t ed25519 github.com >> "${HOME}/.ssh/known_hosts"
+          export GIT_SSH_COMMAND="ssh -i ${HOME}/.ssh/art_deploy_key -o IdentitiesOnly=yes"
+          git clone --depth 1 git@github.com:adamsimms/art.adamsimms.xyz.git "${RUNNER_TEMP}/art-trigger"
+          cd "${RUNNER_TEMP}/art-trigger"
+          git -c user.name="Cloudberry archive" -c user.email="cloudberry-archive@users.noreply.github.com" \
+            commit --allow-empty -m "Rebuild the Cloudberry archive from pinchards.is (${GITHUB_SHA})."
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then
+              echo "Pushed archive rebuild for pinchards ${GITHUB_SHA}"
+              exit 0
+            fi
+            git pull --rebase origin main
+            sleep 2
+          done
+          echo "::error::Could not push the archive rebuild commit to art.adamsimms.xyz."
+          exit 1
