@@ -661,14 +661,17 @@ $thumbUrl = (string) ($current['thumbUrl'] ?? ($cdnThumbs . $filename));
 
 $defaultFullJson = json_encode($imageUrl, $je);
 $cdnFullJson = json_encode($cdnFull, $je);
+$cdnThumbJson = json_encode($cdnThumbs, $je);
 $extraHead = <<<HTML
     <script>
     (function () {
         var params = new URLSearchParams(window.location.search);
         var name = params.get('filename');
         var src = {$defaultFullJson};
+        var thumb = {$cdnThumbJson} + src.split('/').pop();
         if (name && /^[A-Za-z0-9._:+-]+\\.JPE?G$/i.test(name) && name.indexOf('..') === -1) {
             src = {$cdnFullJson} + name;
+            thumb = {$cdnThumbJson} + name;
         }
         var link = document.createElement('link');
         link.rel = 'preload';
@@ -677,6 +680,7 @@ $extraHead = <<<HTML
         link.setAttribute('fetchpriority', 'high');
         document.head.appendChild(link);
         window.__pinchardInitialSrc = src;
+        window.__pinchardInitialThumb = thumb;
     })();
     </script>
 
@@ -729,8 +733,14 @@ $viewerHtml .= <<<HTML
             <script>
             (function () {
                 var img = document.currentScript.previousElementSibling;
-                if (img && window.__pinchardInitialSrc) {
-                    img.src = window.__pinchardInitialSrc;
+                var frame = img && img.parentNode;
+                var thumb = window.__pinchardInitialThumb;
+                if (thumb && frame) {
+                    frame.style.backgroundImage = 'url("' + thumb.replace(/"/g, '\\"') + '")';
+                    frame.classList.add('is-soft-hold');
+                }
+                if (img && thumb) {
+                    img.src = thumb;
                 }
             })();
             </script>
