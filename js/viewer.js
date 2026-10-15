@@ -287,10 +287,7 @@
     }
 
     function imageUrl(filename) {
-        var viewBase = typeof cfg.cdnViewUrl === 'string' && cfg.cdnViewUrl
-            ? cfg.cdnViewUrl
-            : (cfg.cdnUrl + 'view/');
-        return viewBase + filename;
+        return fullImageUrl(filename);
     }
 
     function thumbUrl(filename) {
@@ -305,7 +302,6 @@
     }
 
     function resolveDisplayUrl(filename) {
-        // Masters are 4000px. The 1280px view set is incomplete and soft on retina.
         return fullImageUrl(filename);
     }
 
@@ -376,7 +372,15 @@
         if (!img || !url) {
             return false;
         }
-        return img.src === url || img.currentSrc === url;
+        function norm(value) {
+            try {
+                return decodeURIComponent(value);
+            } catch (err) {
+                return value;
+            }
+        }
+        var target = norm(url);
+        return norm(img.src) === target || norm(img.currentSrc || '') === target;
     }
 
     function bindExistingMainImage() {
@@ -1072,7 +1076,7 @@
             existing.style.opacity = '1';
             setPlaceholderUnderlay(existing.currentSrc || existing.src || largeUrl);
             prefetchAdjacent();
-            // If the view derivative 404s, fall back to thumb (not the 4MB master).
+            // If the full photograph fails, keep the thumbnail on screen.
             existing.addEventListener('error', function onViewError() {
                 existing.removeEventListener('error', onViewError);
                 var thumb = placeholder.dataset.thumb || (cfg.currentFilename ? thumbUrl(cfg.currentFilename) : '');
