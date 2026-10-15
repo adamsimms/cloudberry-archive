@@ -657,18 +657,30 @@ $nextUrl = $nextFilename !== null ? $BASE . '/?filename=' . rawurlencode($nextFi
 // One indexable URL for the archive; ?filename= states stay shareable but consolidate.
 $archiveDescription = 'Cloudberry — hourly photographs of Pinchard\'s Island, Newfoundland, from a solar-powered off-grid camera.';
 
-$viewUrl = $cdnFull . 'view/' . $filename;
 $thumbUrl = (string) ($current['thumbUrl'] ?? ($cdnThumbs . $filename));
 
-$extraHead = '';
-// LCP: preload the 1280w view derivative (not the 4MB master). Mapbox CSS loads on drawer open.
-$extraHead .= '    <link rel="preload" as="image" href="' . h($viewUrl) . "\" fetchpriority=\"high\">\n";
-if ($prevFilename !== null) {
-	$extraHead .= '    <link rel="prefetch" href="' . h($cdnFull . 'view/' . $prevFilename) . "\" as=\"image\">\n";
-}
-if ($nextFilename !== null) {
-	$extraHead .= '    <link rel="prefetch" href="' . h($cdnFull . 'view/' . $nextFilename) . "\" as=\"image\">\n";
-}
+$defaultFullJson = json_encode($imageUrl, $je);
+$cdnFullJson = json_encode($cdnFull, $je);
+$extraHead = <<<HTML
+    <script>
+    (function () {
+        var params = new URLSearchParams(window.location.search);
+        var name = params.get('filename');
+        var src = {$defaultFullJson};
+        if (name && /^[A-Za-z0-9._:+-]+\\.JPE?G$/i.test(name) && name.indexOf('..') === -1) {
+            src = {$cdnFullJson} + name;
+        }
+        var link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = src;
+        link.setAttribute('fetchpriority', 'high');
+        document.head.appendChild(link);
+        window.__pinchardInitialSrc = src;
+    })();
+    </script>
+
+HTML;
 
 $viewerHtml = page_head('Cloudberry — ' . $photoTitle, [
 	'description' => $archiveDescription,
@@ -691,7 +703,6 @@ $nextAria = $nextFilename === null ? ' aria-hidden="true" tabindex="-1"' : '';
 $imgIcon = static fn (string $name): string => h($BASE . '/images/' . $name);
 
 $imageUrlEsc = h($imageUrl);
-$viewUrlEsc = h($viewUrl);
 $thumbUrlEsc = h($thumbUrl);
 $photoAltEsc = h($photoAlt);
 $prevUrlEsc = h($prevUrl);
@@ -712,9 +723,17 @@ $iconWeather = $imgIcon('icon-weather.svg');
 $viewerHtml .= '    <h1 class="visually-hidden">' . h('Cloudberry — ' . $photoTitle) . "</h1>\n";
 $viewerHtml .= <<<HTML
     <div class="preview" id="photoViewer" tabindex="0" aria-label="Photograph viewer. Use arrow keys or swipe to browse. Space plays or pauses autoplay. F toggles fullscreen. Timeline scrubber jumps through the archive.">
-        <div class="photo-placeholder" data-large="{$viewUrlEsc}" data-full="{$imageUrlEsc}" data-thumb="{$thumbUrlEsc}" data-alt="{$photoAltEsc}" id="preview_image">
+        <div class="photo-placeholder" data-large="{$imageUrlEsc}" data-full="{$imageUrlEsc}" data-thumb="{$thumbUrlEsc}" data-alt="{$photoAltEsc}" id="preview_image">
             <div style="padding-bottom: 66.6%;"></div>
-            <img class="viewer-photo-main loaded" src="{$viewUrlEsc}" alt="{$photoAltEsc}" width="1280" height="960" decoding="async" fetchpriority="high">
+            <img class="viewer-photo-main loaded" alt="{$photoAltEsc}" width="4000" height="3000" decoding="async" fetchpriority="high">
+            <script>
+            (function () {
+                var img = document.currentScript.previousElementSibling;
+                if (img && window.__pinchardInitialSrc) {
+                    img.src = window.__pinchardInitialSrc;
+                }
+            })();
+            </script>
         </div>
 
         <div class="detail_view has-timeline" id="detailDrawer">
@@ -807,19 +826,12 @@ $viewerHtml .= <<<HTML
 HTML;
 
 $prefetch = [];
-if ($prevFilename !== null) {
-	$prefetch[] = $cdnFull . 'view/' . $prevFilename;
-}
-if ($nextFilename !== null) {
-	$prefetch[] = $cdnFull . 'view/' . $nextFilename;
-}
 
 $viewerBoot = [
 	'basePath' => $BASE,
 	'catalogUrl' => $BASE . '/data/catalog.json',
 	'siteOrigin' => $SITE,
 	'cdnUrl' => $cdnFull,
-	'cdnViewUrl' => $cdnFull . 'view/',
 	'cdnThumbUrl' => $cdnThumbs,
 	'filenames' => $filenames,
 	'currentIndex' => $currentIndex,
