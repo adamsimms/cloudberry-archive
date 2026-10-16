@@ -1148,18 +1148,36 @@
         });
     }
 
+    function resizePhotoMap() {
+        var mapState = window.pinchardPhotoMap;
+        if (!mapState || !mapState.map || typeof mapState.map.resize !== 'function') {
+            return;
+        }
+        requestAnimationFrame(function() {
+            mapState.map.resize();
+        });
+    }
+
     function setDrawerOpen(open) {
         if (!drawer || !toggle) {
             return;
         }
         if (motion && typeof motion.setDetailDrawerOpen === 'function') {
             motion.setDetailDrawerOpen(drawer, toggle, open);
+            if (open) {
+                resizePhotoMap();
+                window.setTimeout(resizePhotoMap, 520);
+            }
             return;
         }
         drawer.classList.toggle('open', open);
         toggle.classList.toggle('down_arrow', open);
         toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
         toggle.setAttribute('aria-label', open ? 'Hide photograph details' : 'Show photograph details');
+        if (open) {
+            resizePhotoMap();
+            window.setTimeout(resizePhotoMap, 520);
+        }
     }
 
     function requestBrowserFullscreen() {
