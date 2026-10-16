@@ -207,7 +207,7 @@ try {
             <hr class="detail_view-divider" aria-hidden="true">
             <div class="detail_drawer-inner" id="detailDrawerContent">
             <div class="row g-0">
-            <div class="col-md-5 detail_container">
+            <div class="col-md-7 detail_container">
                 <div class="detail_content_view">
                     <div>
                         <div class="detail_rect title_rect"><img src="images/icon-number.svg" alt="" /></div>
@@ -238,7 +238,7 @@ try {
                     </div>
                 </div>
             </div>
-            <div class="col-md-7 mapcontainer">
+            <div class="col-md-5 mapcontainer">
 <?php if ($pinchardMapboxToken !== null && str_starts_with($pinchardMapboxToken, 'pk.')): ?>
                 <div id="photoMap" role="img" aria-label="Map showing photograph location"></div>
 <?php elseif ($hasGps): ?>

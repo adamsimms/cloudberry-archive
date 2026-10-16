@@ -785,7 +785,7 @@ $viewerHtml .= <<<HTML
             <hr class="detail_view-divider" aria-hidden="true">
             <div class="detail_drawer-inner" id="detailDrawerContent">
             <div class="row g-0">
-            <div class="col-md-5 detail_container">
+            <div class="col-md-7 detail_container">
                 <div class="detail_content_view">
                     <div>
                         <div class="detail_rect title_rect"><img src="{$iconNumber}" alt="" /></div>
@@ -816,7 +816,7 @@ $viewerHtml .= <<<HTML
                     </div>
                 </div>
             </div>
-            <div class="col-md-7 mapcontainer">
+            <div class="col-md-5 mapcontainer">
 
 HTML;
 
@@ -1263,7 +1263,7 @@ $infoHtml .= <<<HTML
                         <span class="source-list-desc">Raspberry Pi field software — capture, upload, and power management</span>
                     </li>
                     <li>
-                        <a href="https://github.com/adamsimms/pinchards.is" target="_blank" rel="noopener noreferrer" class="link">pinchards.is</a>
+                        <a href="https://github.com/adamsimms/cloudberry-archive" target="_blank" rel="noopener noreferrer" class="link">cloudberry-archive</a>
                         <span class="source-list-desc">This website and photograph archive</span>
                     </li>
                 </ul>
