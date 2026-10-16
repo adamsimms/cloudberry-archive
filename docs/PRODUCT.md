@@ -4,6 +4,6 @@
 
 Canonical URL: [art.adamsimms.xyz/cloudberry/archive](https://art.adamsimms.xyz/cloudberry/archive/).
 
-Share/citation aliases may still use `pinchards.is`, which redirects to art.
+Share/citation aliases may still use retired `pinchards.is` hostnames, which redirect to art until the domain expires.
 
 Further practice / research notes: [practice-forward-brief.md](practice-forward-brief.md) (artistic context; not a hosting guide).

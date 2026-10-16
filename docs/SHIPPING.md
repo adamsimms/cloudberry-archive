@@ -20,7 +20,7 @@ gh workflow run deploy.yml -R adamsimms/art.adamsimms.xyz
 From a sibling checkout of art:
 
 ```bash
-PINCHARDS_REPO_PATH=/path/to/pinchards.is npm run build:full
+CLOUDBERRY_ARCHIVE_REPO_PATH=/path/to/cloudberry-archive npm run build:full
 ```
 
 ## Retired

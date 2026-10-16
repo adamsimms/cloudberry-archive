@@ -292,7 +292,7 @@ pinchard_layout_nav(['active' => 'info']);
                         <span class="source-list-desc">Raspberry Pi field software — capture, upload, and power management</span>
                     </li>
                     <li>
-                        <a href="https://github.com/adamsimms/pinchards.is" target="_blank" rel="noopener noreferrer" class="link">pinchards.is</a>
+                        <a href="https://github.com/adamsimms/cloudberry-archive" target="_blank" rel="noopener noreferrer" class="link">cloudberry-archive</a>
                         <span class="source-list-desc">This website and photograph archive</span>
                     </li>
                 </ul>

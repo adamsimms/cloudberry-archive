@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: Security vulnerability
-    url: https://github.com/adamsimms/pinchards.is/blob/main/SECURITY.md
+    url: https://github.com/adamsimms/cloudberry-archive/blob/main/SECURITY.md
     about: Report security issues privately — do not open a public issue.
   - name: Live archive — About / contact
     url: https://art.adamsimms.xyz/cloudberry/archive/info/

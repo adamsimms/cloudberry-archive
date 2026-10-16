@@ -1,10 +1,10 @@
-# pinchards.is (Cloudberry archive source)
+# cloudberry-archive
 
-[![CI](https://github.com/adamsimms/pinchards.is/actions/workflows/ci.yml/badge.svg)](https://github.com/adamsimms/pinchards.is/actions/workflows/ci.yml)
+[![CI](https://github.com/adamsimms/cloudberry-archive/actions/workflows/ci.yml/badge.svg)](https://github.com/adamsimms/cloudberry-archive/actions/workflows/ci.yml)
 
 **Canonical site:** [art.adamsimms.xyz/cloudberry/archive](https://art.adamsimms.xyz/cloudberry/archive/)
 
-This repository is the **Cloudberry archive source** — catalog, static HTML/JS/CSS assets, and builders that assemble into the art Pages project. `www.pinchards.is` redirects to art (citation window).
+This repository is the **Cloudberry archive source** — catalog, static HTML/JS/CSS assets, and builders that assemble into the art Pages project. Legacy `pinchards.is` / `www` hostnames still 301 to art until that domain expires.
 
 Cloudberry is a long-running photographic archive of off-the-grid life on Pinchard's Island, Newfoundland.
 
@@ -40,8 +40,8 @@ See art [docs/CLOUDBERRY-ASSEMBLE.md](https://github.com/adamsimms/art.adamsimms
 Node.js 20+ for frontend vendor copies. CI builds the static archive used in production; prefer verifying via an art `build:full` / Pages preview.
 
 ```bash
-git clone https://github.com/adamsimms/pinchards.is.git
-cd pinchards.is
+git clone https://github.com/adamsimms/cloudberry-archive.git
+cd cloudberry-archive
 npm install && npm run vendor:frontend
 ```
 

@@ -50,10 +50,10 @@ jobs:
           git clone --depth 1 git@github.com:adamsimms/art.adamsimms.xyz.git "${RUNNER_TEMP}/art-trigger"
           cd "${RUNNER_TEMP}/art-trigger"
           git -c user.name="Cloudberry archive" -c user.email="cloudberry-archive@users.noreply.github.com" \
-            commit --allow-empty -m "Rebuild the Cloudberry archive from pinchards.is (${GITHUB_SHA})."
+            commit --allow-empty -m "Rebuild the Cloudberry archive from cloudberry-archive (${GITHUB_SHA})."
           for attempt in 1 2 3; do
             if git push origin HEAD:main; then
-              echo "Pushed archive rebuild for pinchards ${GITHUB_SHA}"
+              echo "Pushed archive rebuild for cloudberry-archive ${GITHUB_SHA}"
               exit 0
             fi
             git pull --rebase origin main

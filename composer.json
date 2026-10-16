@@ -1,6 +1,6 @@
 {
-    "name": "adamsimms/pinchards.is",
-    "description": "Pinchards.is — S3 photo gallery and minisites",
+    "name": "adamsimms/cloudberry-archive",
+    "description": "Cloudberry archive source — static catalog for art.adamsimms.xyz",
     "license": "MIT",
     "require": {
         "php": ">=8.2",

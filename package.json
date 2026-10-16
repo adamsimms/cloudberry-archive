@@ -1,5 +1,5 @@
 {
-  "name": "pinchards-is",
+  "name": "cloudberry-archive",
   "private": true,
   "scripts": {
     "vendor:frontend": "node scripts/vendor-frontend.js",
