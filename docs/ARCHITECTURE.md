@@ -9,7 +9,7 @@ Browser → art.adamsimms.xyz (Cloudflare Pages)
             └── /maps/*               ← also assembled / authored on art
 ```
 
-`pinchards.is` is a **redirect Worker** onto those art paths (citations / bookmarks).
+Retired `pinchards.is` / `www` hostnames still hit a **redirect Worker** onto those art paths (citations / bookmarks) until the domain expires.
 
 ## Media
 

@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in **Cloudberry** (`pinchards.is` source → art.adamsimms.xyz). This is a personal archive; small, focused improvements are welcome.
+Thanks for your interest in **Cloudberry** (`cloudberry-archive` source → art.adamsimms.xyz). This is a personal archive; small, focused improvements are welcome.
 
 ## Setup
 
@@ -21,4 +21,4 @@ See the [README](README.md). You do not need gallery credentials to edit JS, CSS
 
 ## Contact
 
-Open a [GitHub issue](https://github.com/adamsimms/pinchards.is/issues) or use the contact details on the live [About](https://art.adamsimms.xyz/cloudberry/archive/info/) page.
+Open a [GitHub issue](https://github.com/adamsimms/cloudberry-archive/issues) or use the contact details on the live [About](https://art.adamsimms.xyz/cloudberry/archive/info/) page.
