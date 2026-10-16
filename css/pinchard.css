@@ -718,6 +718,7 @@ body.viewer-page--kiosk .photo-placeholder img.viewer-photo-main {
 }
 .detail_view.open {
     transform: translateY(0);
+    height: min(85vh, 720px);
 }
 .detail_view.open .detail_drawer-inner {
     overflow-y: auto;
@@ -732,8 +733,11 @@ body.viewer-page--kiosk .photo-placeholder img.viewer-photo-main {
 .detail_view .detail_drawer-inner > .row {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-start;
+    align-items: stretch;
     margin: 0;
+}
+.detail_view.open .detail_drawer-inner > .row {
+    min-height: 100%;
 }
 .detail_view .detail_container,
 .detail_view .mapcontainer {
@@ -750,6 +754,10 @@ body.viewer-page--kiosk .photo-placeholder img.viewer-photo-main {
     .detail_view .mapcontainer {
         flex: 0 0 41.6667%;
         max-width: 41.6667%;
+        float: right;
+        display: flex;
+        justify-content: flex-end;
+        align-items: stretch;
     }
 }
 .detail_view .detail_container {
@@ -814,11 +822,18 @@ body.viewer-page--kiosk .photo-placeholder img.viewer-photo-main {
 }
 .detail_view .mapcontainer #photoMap {
     width: 100%;
-    max-width: 320px;
-    margin-inline: auto;
-    aspect-ratio: 4 / 3;
-    min-height: 160px;
-    max-height: 240px;
+    aspect-ratio: 16 / 10;
+    min-height: 180px;
+}
+@media (min-width: 768px) {
+    .detail_view .mapcontainer #photoMap {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        aspect-ratio: auto;
+        float: right;
+        margin: 0;
+    }
 }
 
 .photos_container {

@@ -361,7 +361,13 @@
                 duration: 0.45,
                 delay: 0.28,
                 ease: 'power2.out',
-                clearProps: 'all'
+                clearProps: 'transform,opacity',
+                onComplete: function() {
+                    var mapState = window.pinchardPhotoMap;
+                    if (mapState && mapState.map && typeof mapState.map.resize === 'function') {
+                        mapState.map.resize();
+                    }
+                }
             });
         }
     }
