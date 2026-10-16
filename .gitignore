@@ -11,3 +11,6 @@ secrets.local.php
 images/photo/.cache/
 images/photo/tmp.jpg
 dist-archive/
+
+# Local Impeccable tooling cache
+.impeccable/
