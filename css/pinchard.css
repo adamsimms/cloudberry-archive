@@ -744,12 +744,12 @@ body.viewer-page--kiosk .photo-placeholder img.viewer-photo-main {
 }
 @media (min-width: 768px) {
     .detail_view .detail_container {
-        flex: 0 0 41.6667%;
-        max-width: 41.6667%;
-    }
-    .detail_view .mapcontainer {
         flex: 0 0 58.3333%;
         max-width: 58.3333%;
+    }
+    .detail_view .mapcontainer {
+        flex: 0 0 41.6667%;
+        max-width: 41.6667%;
     }
 }
 .detail_view .detail_container {
@@ -814,8 +814,11 @@ body.viewer-page--kiosk .photo-placeholder img.viewer-photo-main {
 }
 .detail_view .mapcontainer #photoMap {
     width: 100%;
-    aspect-ratio: 2 / 1;
-    min-height: 200px;
+    max-width: 320px;
+    margin-inline: auto;
+    aspect-ratio: 4 / 3;
+    min-height: 160px;
+    max-height: 240px;
 }
 
 .photos_container {
