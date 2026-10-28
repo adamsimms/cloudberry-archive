@@ -23,7 +23,7 @@ require_once dirname(__DIR__) . '/lib/bootstrap.php';
 const CATALOG_CDN_FULL = 'https://cloudberry-images.adamsimms.xyz/';
 const CATALOG_CDN_THUMBS = 'https://cloudberry-thumbs.adamsimms.xyz/';
 const CATALOG_EXIF_RANGE_BYTES = 262144;
-const CATALOG_EXPECTED_COUNT = 1955;
+const CATALOG_EXPECTED_COUNT = 1957;
 
 $limit = null;
 $skipExifFetch = false;

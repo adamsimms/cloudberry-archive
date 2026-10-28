@@ -17,7 +17,7 @@ declare(strict_types=1);
 $REPO = dirname(__DIR__);
 $BASE = '/cloudberry/archive';
 $SITE = 'https://art.adamsimms.xyz';
-$EXPECTED_COUNT = 1955;
+$EXPECTED_COUNT = 1957;
 $OUT = $REPO . '/dist-archive';
 $ALLOW_PARTIAL = false;
 
