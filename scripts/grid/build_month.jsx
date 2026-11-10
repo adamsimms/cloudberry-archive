@@ -6,6 +6,9 @@
 // Run: InDesign > Scripts panel, or via AppleScript `do script` (language javascript).
 // CB_ROOT is the working folder (placement CSVs, tiles/, proofs/, print/, seed .indd); InDesign does not
 // see shell environment variables, so set it as a global. Default: ~/Desktop/Cloudberry-grid.
+// Fonts (install before running): Inter 4.001 and Google Sans Flex 5.000, both SIL OFL 1.1; the 2026-10
+// print used Inter Regular and SemiBold. Copies on Drive: 30 STUDIO/37 RESOURCES/FONTS. PT Mono (macOS
+// system font) is the label fallback.
 
 #target indesign
 
